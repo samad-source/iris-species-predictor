@@ -38,17 +38,11 @@ species_info <- list(
   )
 )
 
-
-# ==================================================
 # USER INTERFACE
-# ==================================================
 
 ui <- fluidPage(
-  
-  
-  # ------------------------------------------------
+
   # BASIC STYLING
-  # ------------------------------------------------
   
   tags$head(
     
@@ -147,11 +141,8 @@ ui <- fluidPage(
       
     "))
   ),
-  
-  
-  # ==================================================
+
   # HEADER
-  # ==================================================
   
   h1(
     "IRIS SPECIES PREDICTOR",
@@ -162,11 +153,8 @@ ui <- fluidPage(
     "Interactive k-Nearest Neighbours Classification",
     class = "subtitle"
   ),
-  
-  
-  # ==================================================
+
   # 1. MODEL SETTINGS
-  # ==================================================
   
   div(
     
@@ -229,11 +217,8 @@ ui <- fluidPage(
     )
     
   ),
-  
-  
-  # ==================================================
+
   # 2. FLOWER MEASUREMENTS
-  # ==================================================
   
   div(
     
@@ -245,10 +230,8 @@ ui <- fluidPage(
     ),
     
     fluidRow(
-      
-      # ------------------------------
+
       # SEPAL
-      # ------------------------------
       
       column(
         
@@ -283,10 +266,7 @@ ui <- fluidPage(
         
       ),
       
-      
-      # ------------------------------
       # PETAL
-      # ------------------------------
       
       column(
         
@@ -322,11 +302,7 @@ ui <- fluidPage(
       )
       
     ),
-    
-    
-    # ------------------------------
-    # PREDICT BUTTON
-    # ------------------------------
+# PREDICT BUTTON-
     
     div(
       
@@ -342,10 +318,7 @@ ui <- fluidPage(
     
   ),
   
-  
-  # ==================================================
   # 3. PREDICTION RESULTS
-  # ==================================================
   
   div(
     
@@ -355,12 +328,9 @@ ui <- fluidPage(
       "3. Prediction Results",
       class = "section-title"
     ),
-    
-    
-    # ------------------------------
+
     # SPECIES RESULT
-    # ------------------------------
-    
+   
     div(
       
       class = "prediction-box",
@@ -368,20 +338,14 @@ ui <- fluidPage(
       uiOutput("species_result")
       
     ),
-    
-    
-    # ------------------------------
+
     # MODEL SETTINGS USED
-    # ------------------------------
     
     textOutput("prediction_settings"),
     
     br(),
-    
-    
-    # ------------------------------
+
     # ACCURACY
-    # ------------------------------
     
     div(
       
@@ -393,11 +357,7 @@ ui <- fluidPage(
     
     
     hr(),
-    
-    
-    # ------------------------------
     # NEAREST NEIGHBOURS
-    # ------------------------------
     
     h4("Nearest Neighbours"),
     
@@ -405,12 +365,9 @@ ui <- fluidPage(
     
     
     br(),
-    
-    
-    # ------------------------------
+
     # VISUALIZATION
-    # ------------------------------
-    
+
     h4("Neighbour Visualization"),
     
     plotOutput(
@@ -420,11 +377,8 @@ ui <- fluidPage(
     
     
     hr(),
-    
-    
-    # ------------------------------
+
     # DATA PREVIEW
-    # ------------------------------
     
     h4("Iris Dataset Preview"),
     
@@ -434,24 +388,15 @@ ui <- fluidPage(
   
 )
 
-
-# ==================================================
 # SERVER
-# ==================================================
 
 server <- function(input, output) {
-  
-  
-  # ==================================================
+
   # LOAD DATA
-  # ==================================================
   
   iris_data <- iris
-  
-  
-  # ==================================================
+
   # TRAIN / TEST SPLIT
-  # ==================================================
   
   set.seed(123)
   
@@ -467,11 +412,8 @@ server <- function(input, output) {
   test_data <- iris_data[
     -train_index,
   ]
-  
-  
-  # ==================================================
+
   # MODEL FOR EVALUATION
-  # ==================================================
   
   model <- reactive({
     
@@ -488,11 +430,8 @@ server <- function(input, output) {
     )
     
   })
-  
-  
-  # ==================================================
+
   # MODEL ACCURACY
-  # ==================================================
   
   accuracy <- reactive({
     
@@ -505,11 +444,8 @@ server <- function(input, output) {
     )
     
   })
-  
-  
-  # ==================================================
+
   # DISPLAY MODEL ACCURACY
-  # ==================================================
   
   output$model_accuracy <- renderText({
     
@@ -523,21 +459,15 @@ server <- function(input, output) {
     )
     
   })
-  
-  
-  # ==================================================
+
   # PREDICT NEW FLOWER
-  # ==================================================
   
   observeEvent(
     
     input$predict,
     
     {
-      
-      # ----------------------------------------------
       # CREATE NEW FLOWER
-      # ----------------------------------------------
       
       new_flower <- data.frame(
         
@@ -550,11 +480,8 @@ server <- function(input, output) {
         Petal.Width = input$petal_width
         
       )
-      
-      
-      # ----------------------------------------------
+
       # RUN K-NN
-      # ----------------------------------------------
       
       prediction_model <- kknn(
         
@@ -575,11 +502,8 @@ server <- function(input, output) {
         scale = TRUE
         
       )
-      
-      
-      # ==================================================
+
       # GET PREDICTION
-      # ==================================================
       
       prediction <- fitted(
         prediction_model
@@ -588,18 +512,12 @@ server <- function(input, output) {
       predicted_species <- as.character(
         prediction
       )
-      
-      
-      # ==================================================
+
       # GET SPECIES INFORMATION
-      # ==================================================
       
       info <- species_info[[predicted_species]]
-      
-      
-      # ----------------------------------------------
+
       # DISPLAY IMAGE + NAME + DESCRIPTION
-      # ----------------------------------------------
       
       output$species_result <- renderUI({
         
@@ -632,11 +550,8 @@ server <- function(input, output) {
         )
         
       })
-      
-      
-      # ==================================================
+
       # DISPLAY SETTINGS USED FOR PREDICTION
-      # ==================================================
       
       distance_name <- ifelse(
         
@@ -672,11 +587,8 @@ server <- function(input, output) {
         )
         
       })
-      
-      
-      # ==================================================
+
       # GET NEAREST NEIGHBOURS
-      # ==================================================
       
       neighbor_indices <- as.vector(
         prediction_model$C
@@ -693,11 +605,8 @@ server <- function(input, output) {
       neighbor_weights <- as.vector(
         prediction_model$W
       )
-      
-      
-      # ==================================================
+
       # GET ACTUAL NEIGHBOUR ROWS
-      # ==================================================
       
       neighbor_points <- train_data[
         neighbor_indices,
@@ -715,11 +624,8 @@ server <- function(input, output) {
       neighbor_points$Distance <- neighbor_distance
       
       neighbor_points$Weight <- neighbor_weights
-      
-      
-      # ==================================================
+
       # CREATE NEIGHBOUR TABLE
-      # ==================================================
       
       neighbor_data <- data.frame(
         
@@ -743,31 +649,22 @@ server <- function(input, output) {
         )
         
       )
-      
-      
-      # ----------------------------------------------
+
       # DISPLAY NEIGHBOUR TABLE
-      # ----------------------------------------------
       
       output$nearest_neighbors <- renderTable({
         
         neighbor_data
         
       })
-      
-      
-      # ==================================================
+
       # CREATE VISUALIZATION
-      # ==================================================
       
       output$neighbor_plot <- renderPlot({
         
         ggplot() +
-          
-          
-          # ------------------------------
+
         # ALL TRAINING FLOWERS
-        # ------------------------------
         
         geom_point(
           
@@ -783,11 +680,8 @@ server <- function(input, output) {
           size = 2
           
         ) +
-          
-          
-          # ------------------------------
+
         # NEAREST NEIGHBOURS
-        # ------------------------------
         
         geom_point(
           
@@ -802,12 +696,9 @@ server <- function(input, output) {
           size = 5
           
         ) +
-          
-          
-          # ------------------------------
+
         # NEIGHBOUR NUMBERS
-        # ------------------------------
-        
+          
         geom_text(
           
           data = neighbor_points,
@@ -823,11 +714,9 @@ server <- function(input, output) {
           
         ) +
           
-          
-          # ------------------------------
+
         # USER'S FLOWER
-        # ------------------------------
-        
+
         geom_point(
           
           data = new_flower,
@@ -842,11 +731,8 @@ server <- function(input, output) {
           color = "black"
           
         ) +
-          
-          
-          # ------------------------------
+
         # GRAPH LABELS
-        # ------------------------------
         
         labs(
           
@@ -869,10 +755,7 @@ server <- function(input, output) {
     
   )
   
-  
-  # ==================================================
   # DATA PREVIEW
-  # ==================================================
   
   output$data_preview <- renderTable({
     
@@ -882,10 +765,7 @@ server <- function(input, output) {
   
 }
 
-
-# ==================================================
 # RUN SHINY APPLICATION
-# ==================================================
 
 shinyApp(
   ui = ui,
