@@ -1,15 +1,23 @@
-# Install Shiny package that allows you to build interactive web applications
-# directly in R
+# Install Shiny package that allows you to build
+# interactive web applications directly in R
 library(shiny)
 
 # Load kknn for k-Nearest Neighbours
 library(kknn)
 
+# Load ggplot2 for visual representation
+library(ggplot2)
+
+
+# ==================================================
 # USER INTERFACE
+# ==================================================
+
 ui <- fluidPage(
   
   titlePanel("IRIS SPECIES PREDICTOR"),
   
+  # Distance metric
   selectInput(
     inputId = "distance_metric",
     label = "Distance Metric",
@@ -20,6 +28,7 @@ ui <- fluidPage(
     selected = 2
   ),
   
+  # Number of neighbours
   sliderInput(
     inputId = "k_value",
     label = "Number of Neighbours (K)",
@@ -29,6 +38,18 @@ ui <- fluidPage(
     step = 2
   ),
   
+  # Neighbour weighting
+  selectInput(
+    inputId = "weighting_method",
+    label = "Neighbour Weighting",
+    choices = c(
+      "Uniform" = "rectangular",
+      "Distance Weighted" = "inv"
+    ),
+    selected = "rectangular"
+  ),
+  
+  # Flower measurements
   numericInput(
     inputId = "sepal_length",
     label = "Sepal Length",
@@ -57,6 +78,7 @@ ui <- fluidPage(
     min = 0
   ),
   
+  # Prediction button
   actionButton(
     inputId = "predict",
     label = "Predict Species"
@@ -65,22 +87,51 @@ ui <- fluidPage(
   br(),
   br(),
   
+  # Prediction result
   textOutput("prediction"),
   
+  br(),
+  
+  # Nearest neighbour table
   tableOutput("nearest_neighbors"),
   
+  br(),
+  
+  # Neighbour visualization
+  plotOutput(
+    "neighbor_plot",
+    height = "500px"
+  ),
+  
+  br(),
+  
+  # Model accuracy
   textOutput("model_accuracy"),
   
+  br(),
+  
+  # Dataset preview
   tableOutput("data_preview")
 )
 
+
+# ==================================================
 # SERVER
+# ==================================================
+
 server <- function(input, output) {
   
-# Load Iris dataset
+  # ------------------------------------------------
+  # LOAD IRIS DATA
+  # ------------------------------------------------
+  
   iris_data <- iris
-
-# TRAIN / TEST SPLIT
+  
+  
+  # ------------------------------------------------
+  # TRAIN / TEST SPLIT
+  # ------------------------------------------------
+  
   set.seed(123)
   
   train_index <- sample(
@@ -91,8 +142,11 @@ server <- function(input, output) {
   train_data <- iris_data[train_index, ]
   test_data <- iris_data[-train_index, ]
   
-# MODEL USED FOR EVALUATION
-
+  
+  # ------------------------------------------------
+  # MODEL FOR EVALUATION
+  # ------------------------------------------------
+  
   model <- reactive({
     
     kknn(
@@ -101,13 +155,17 @@ server <- function(input, output) {
       test = test_data,
       k = input$k_value,
       distance = as.numeric(input$distance_metric),
-      kernel = "rectangular",
+      kernel = input$weighting_method,
       scale = TRUE
     )
     
   })
-
-# MODEL ACCURACY
+  
+  
+  # ------------------------------------------------
+  # MODEL ACCURACY
+  # ------------------------------------------------
+  
   accuracy <- reactive({
     
     predictions <- fitted(model())
@@ -115,7 +173,12 @@ server <- function(input, output) {
     mean(predictions == test_data$Species)
     
   })
-# DISPLAY ACCURACY
+  
+  
+  # ------------------------------------------------
+  # DISPLAY MODEL ACCURACY
+  # ------------------------------------------------
+  
   output$model_accuracy <- renderText({
     
     paste(
@@ -125,11 +188,15 @@ server <- function(input, output) {
     )
     
   })
- 
-# PREDICT NEW FLOWER
+  
+  
+  # ------------------------------------------------
+  # PREDICT NEW FLOWER
+  # ------------------------------------------------
   
   observeEvent(input$predict, {
     
+    # Create a new flower from user input
     new_flower <- data.frame(
       Sepal.Length = input$sepal_length,
       Sepal.Width = input$sepal_width,
@@ -138,28 +205,26 @@ server <- function(input, output) {
     )
     
     
+    # Run k-NN on the new flower
     prediction_model <- kknn(
       Species ~ .,
       train = train_data,
       test = new_flower,
       k = input$k_value,
       distance = as.numeric(input$distance_metric),
-      kernel = "rectangular",
+      kernel = input$weighting_method,
       scale = TRUE
     )
     
     
+    # ------------------------------------------------
+    # GET PREDICTION
+    # ------------------------------------------------
+    
     prediction <- fitted(prediction_model)
     
-    neighbor_data <- data.frame(
-      Species = as.vector(prediction_model$CL),
-      Distance = as.vector(prediction_model$D)
-    )
     
-    output$nearest_neighbors <- renderTable({
-      neighbor_data
-    })
-    
+    # Display prediction
     output$prediction <- renderText({
       
       paste(
@@ -168,9 +233,143 @@ server <- function(input, output) {
       )
       
     })
- 
+    
+    
+    # ------------------------------------------------
+    # GET NEAREST NEIGHBOUR INFORMATION
+    # ------------------------------------------------
+    
+    neighbor_indices <- as.vector(
+      prediction_model$C
+    )
+    
+    neighbor_species <- as.vector(
+      prediction_model$CL
+    )
+    
+    neighbor_distance <- as.vector(
+      prediction_model$D
+    )
+    
+    neighbor_weights <- as.vector(
+      prediction_model$W
+    )
+    
+    
+    # ------------------------------------------------
+    # GET ACTUAL NEIGHBOUR ROWS
+    # ------------------------------------------------
+    
+    neighbor_points <- train_data[
+      neighbor_indices,
+      ,
+      drop = FALSE
+    ]
+    
+    
+    # Add neighbour information
+    neighbor_points$Neighbour <- seq_along(
+      neighbor_indices
+    )
+    
+    neighbor_points$Distance <- neighbor_distance
+    
+    neighbor_points$Weight <- neighbor_weights
+    
+    
+    # ------------------------------------------------
+    # CREATE NEIGHBOUR TABLE
+    # ------------------------------------------------
+    
+    neighbor_data <- data.frame(
+      Neighbour = seq_along(neighbor_distance),
+      Species = neighbor_species,
+      Distance = neighbor_distance,
+      Weight = neighbor_weights
+    )
+    
+    
+    # Display neighbour table
+    output$nearest_neighbors <- renderTable({
+      
+      neighbor_data
+      
+    })
+    
+    
+    # ------------------------------------------------
+    # CREATE NEIGHBOUR PLOT
+    # ------------------------------------------------
+    
+    output$neighbor_plot <- renderPlot({
+      
+      ggplot() +
+        
+        # All training flowers
+        geom_point(
+          data = train_data,
+          aes(
+            x = Petal.Length,
+            y = Petal.Width,
+            color = Species
+          ),
+          alpha = 0.45,
+          size = 2
+        ) +
+        
+        # K nearest neighbours
+        geom_point(
+          data = neighbor_points,
+          aes(
+            x = Petal.Length,
+            y = Petal.Width,
+            color = Species
+          ),
+          size = 5
+        ) +
+        
+        # Number each neighbour
+        geom_text(
+          data = neighbor_points,
+          aes(
+            x = Petal.Length,
+            y = Petal.Width,
+            label = Neighbour
+          ),
+          nudge_y = 0.05,
+          size = 4
+        ) +
+        
+        # User's flower
+        geom_point(
+          data = new_flower,
+          aes(
+            x = Petal.Length,
+            y = Petal.Width
+          ),
+          shape = 8,
+          size = 6,
+          color = "black"
+        ) +
+        
+        labs(
+          title = "Your Flower and Its Nearest Neighbours",
+          x = "Petal Length",
+          y = "Petal Width",
+          color = "Species"
+        ) +
+        
+        theme_minimal()
+      
+    })
+    
   })
-# SHOW DATA PREVIEW
+  
+  
+  # ------------------------------------------------
+  # DATA PREVIEW
+  # ------------------------------------------------
+  
   output$data_preview <- renderTable({
     
     head(iris_data)
@@ -178,7 +377,12 @@ server <- function(input, output) {
   })
   
 }
+
+
+# ==================================================
 # RUN SHINY APP
+# ==================================================
+
 shinyApp(
   ui = ui,
   server = server
