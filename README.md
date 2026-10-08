@@ -1,6 +1,6 @@
 # Iris Species Predictor
 
-![Iris Species Predictor](www/iris-predictor-screenshot.png) An interactive **R Shiny** application that predicts the species of an Iris flower using a **k-Nearest Neighbours (k-NN)** machine learning model. \## Live Demo
+![Iris Species Predictor](www/iris-predictor-screenshot.png) An interactive **R Shiny** application that predicts the species of an Iris flower using a **k-Nearest Neighbours (k-NN)** machine learning model. [\## Live Demo](https://am-unscripted007-iris-species-predictor.share.connect.posit.cloud/)
 
 **Coming soon**
 
@@ -125,7 +125,7 @@ iris-species-predictor/
 ├── app.R
 ├── README.md
 ├── .gitignore
-│
+├── manifest.json
 └── www/
     ├── Iris_setosa.png
     ├── Iris_versicolor.png
