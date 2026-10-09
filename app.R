@@ -11,9 +11,31 @@ species_info <- list(
     name = "Iris-setosa",
     image = "Iris_setosa.png",
     description = paste(
-      "Iris setosa is one of the three species in the Iris dataset.",
-      "It is generally characterized by relatively small petals",
-      "compared with the other two species."
+      "Iris setosa is a flowering perennial plant in the iris family,",
+      "Iridaceae. It is native to northern regions of North America",
+      "and parts of northeastern Asia. It is often found in moist",
+      "meadows, coastal areas and other cool, damp habitats.",
+      "The species is recognized by its distinctive flowers,",
+      "with three prominent petal-like sepals and three smaller",
+      "upright petals. Its leaves are narrow and sword-shaped."
+    ),
+    fun_fact = paste(
+      "Iris setosa has three large, spreading sepals that are often",
+      "more visually prominent than its three smaller upright petals.",
+      "It is adapted to cool climates and can grow in moist coastal",
+      "environments where many garden plants struggle."
+    ),
+    advantages = c(
+      "Can grow well in cool climates and moist garden locations.",
+      "Its attractive flowers can add colour to suitable naturalistic gardens.",
+      "Can contribute to plant diversity in appropriate wetland-style landscapes.",
+      "Its perennial growth habit means it can return in suitable conditions."
+    ),
+    disadvantages = c(
+      "May struggle in hot climates without suitable growing conditions.",
+      "Requires appropriate moisture and soil conditions for healthy growth.",
+      "May not tolerate prolonged drought or excessively dry soil well.",
+      "Its growing requirements may make it unsuitable for some indoor gardens."
     )
   ),
   
@@ -21,9 +43,30 @@ species_info <- list(
     name = "Iris-versicolor",
     image = "Iris_versicolor.png",
     description = paste(
-      "Iris versicolor is one of the three species represented",
-      "in the Iris dataset. Its measurements are generally",
-      "between those of Iris setosa and Iris virginica."
+      "Iris versicolor, commonly known as the blue flag iris,",
+      "is a perennial flowering plant native to eastern North America.",
+      "It commonly grows in wetlands, marshes, pond margins and",
+      "other moist habitats. Its flowers are usually blue-violet",
+      "with distinctive markings on the sepals. Its sword-shaped",
+      "leaves and spreading rhizomes help it form clumps over time."
+    ),
+    fun_fact = paste(
+      "The species name versicolor refers to its variable flower",
+      "colouration. Individual flowers can display different shades",
+      "of blue and violet, often with contrasting yellow or white",
+      "markings that help distinguish the flower's pattern."
+    ),
+    advantages = c(
+      "Well suited to suitable rain gardens and pond margins.",
+      "Its colourful flowers can provide seasonal garden interest.",
+      "Can contribute to native wetland planting in its natural range.",
+      "Its spreading rhizomes can help establish a dense planting."
+    ),
+    disadvantages = c(
+      "Needs consistently moist conditions for best growth.",
+      "May perform poorly in dry sites without adequate moisture.",
+      "Its rhizomes can spread and may need management in small gardens.",
+      "The plant is toxic if eaten, so keep it away from pets and children."
     )
   ),
   
@@ -31,9 +74,31 @@ species_info <- list(
     name = "Iris-virginica",
     image = "Iris_virginica.jpg",
     description = paste(
-      "Iris virginica is one of the three species represented",
-      "in the Iris dataset. It generally has larger petal",
-      "measurements than the other two species."
+      "Iris virginica, commonly called the Virginia iris or southern",
+      "blue flag, is a perennial flowering plant native to eastern",
+      "North America. It is commonly associated with marshes,",
+      "wet meadows, stream margins and other moist habitats.",
+      "Its flowers are generally blue to violet, and its long,",
+      "upright leaves grow from underground rhizomes. Flower size",
+      "and colour can vary with the variety and growing conditions."
+    ),
+    fun_fact = paste(
+      "Iris virginica is adapted to wet environments and can be",
+      "used in suitable rain gardens and pond-edge plantings.",
+      "Its flowers provide a seasonal display, while its foliage",
+      "can add structure to a garden even when the plant is not flowering."
+    ),
+    advantages = c(
+      "Can thrive in moist soils and suitable wetland-style gardens.",
+      "Its flowers can add colour and visual interest to landscapes.",
+      "Can be useful in appropriate native-plant and rain-garden designs.",
+      "Its perennial growth habit can provide recurring seasonal interest."
+    ),
+    disadvantages = c(
+      "May struggle in dry soil or during prolonged drought.",
+      "Needs sufficient space as its clumps develop over time.",
+      "Excessively dry conditions can reduce plant health and flowering.",
+      "The plant is toxic if eaten, so keep it away from pets and children."
     )
   )
 )
@@ -41,7 +106,7 @@ species_info <- list(
 # USER INTERFACE
 
 ui <- fluidPage(
-
+  
   # BASIC STYLING
   
   tags$head(
@@ -139,9 +204,48 @@ ui <- fluidPage(
         font-size: 16px;
       }
       
+      .flower-details {
+        text-align: left;
+        max-width: 850px;
+        margin: 20px auto 0 auto;
+      }
+
+      .flower-detail-card {
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+        border-radius: 8px;
+        padding: 18px;
+        margin-top: 15px;
+      }
+
+      .flower-detail-card h4 {
+        margin-top: 0;
+        margin-bottom: 12px;
+        color: #234e52;
+        font-weight: bold;
+      }
+
+      .flower-detail-card p,
+      .flower-detail-card li {
+        font-size: 15px;
+        line-height: 1.7;
+      }
+
+      .flower-detail-card ul {
+        padding-left: 22px;
+        margin-bottom: 0;
+      }
+
+      .flower-scientific-name {
+        color: #666666;
+        font-style: italic;
+        margin-bottom: 12px;
+      }
+
+      
     "))
   ),
-
+  
   # HEADER
   
   h1(
@@ -153,7 +257,7 @@ ui <- fluidPage(
     "Interactive k-Nearest Neighbours Classification",
     class = "subtitle"
   ),
-
+  
   # 1. MODEL SETTINGS
   
   div(
@@ -217,7 +321,7 @@ ui <- fluidPage(
     )
     
   ),
-
+  
   # 2. FLOWER MEASUREMENTS
   
   div(
@@ -230,7 +334,7 @@ ui <- fluidPage(
     ),
     
     fluidRow(
-
+      
       # SEPAL
       
       column(
@@ -302,7 +406,7 @@ ui <- fluidPage(
       )
       
     ),
-# PREDICT BUTTON-
+    # PREDICT BUTTON-
     
     div(
       
@@ -328,9 +432,9 @@ ui <- fluidPage(
       "3. Prediction Results",
       class = "section-title"
     ),
-
+    
     # SPECIES RESULT
-   
+    
     div(
       
       class = "prediction-box",
@@ -338,13 +442,13 @@ ui <- fluidPage(
       uiOutput("species_result")
       
     ),
-
+    
     # MODEL SETTINGS USED
     
     textOutput("prediction_settings"),
     
     br(),
-
+    
     # ACCURACY
     
     div(
@@ -365,9 +469,9 @@ ui <- fluidPage(
     
     
     br(),
-
+    
     # VISUALIZATION
-
+    
     h4("Neighbour Visualization"),
     
     plotOutput(
@@ -377,7 +481,7 @@ ui <- fluidPage(
     
     
     hr(),
-
+    
     # DATA PREVIEW
     
     h4("Iris Dataset Preview"),
@@ -391,11 +495,11 @@ ui <- fluidPage(
 # SERVER
 
 server <- function(input, output) {
-
+  
   # LOAD DATA
   
   iris_data <- iris
-
+  
   # TRAIN / TEST SPLIT
   
   set.seed(123)
@@ -412,7 +516,7 @@ server <- function(input, output) {
   test_data <- iris_data[
     -train_index,
   ]
-
+  
   # MODEL FOR EVALUATION
   
   model <- reactive({
@@ -430,7 +534,7 @@ server <- function(input, output) {
     )
     
   })
-
+  
   # MODEL ACCURACY
   
   accuracy <- reactive({
@@ -444,7 +548,7 @@ server <- function(input, output) {
     )
     
   })
-
+  
   # DISPLAY MODEL ACCURACY
   
   output$model_accuracy <- renderText({
@@ -459,7 +563,7 @@ server <- function(input, output) {
     )
     
   })
-
+  
   # PREDICT NEW FLOWER
   
   observeEvent(
@@ -480,7 +584,7 @@ server <- function(input, output) {
         Petal.Width = input$petal_width
         
       )
-
+      
       # RUN K-NN
       
       prediction_model <- kknn(
@@ -502,7 +606,7 @@ server <- function(input, output) {
         scale = TRUE
         
       )
-
+      
       # GET PREDICTION
       
       prediction <- fitted(
@@ -512,45 +616,70 @@ server <- function(input, output) {
       predicted_species <- as.character(
         prediction
       )
-
+      
       # GET SPECIES INFORMATION
       
       info <- species_info[[predicted_species]]
-
-      # DISPLAY IMAGE + NAME + DESCRIPTION
+      
+      # DISPLAY IMAGE, NAME, DESCRIPTION AND ADDITIONAL DETAILS
       
       output$species_result <- renderUI({
-        
         tagList(
-          
+          # FLOWER NAME
           div(
-            
             class = "prediction-name",
-            
             info$name
-            
           ),
           
+          # FLOWER IMAGE
           tags$img(
-            
             src = info$image,
-            
-            class = "prediction-image"
-            
+            class = "prediction-image",
+            alt = info$name
           ),
           
-          p(
+          # FLOWER INFORMATION
+          div(
+            class = "flower-details",
             
-            info$description,
+            # DESCRIPTION
+            div(
+              class = "flower-detail-card",
+              h4("About This Flower"),
+              p(
+                info$description,
+                class = "description"
+              )
+            ),
             
-            class = "description"
+            # FUN FACT
+            div(
+              class = "flower-detail-card",
+              h4("✨ Fun Fact"),
+              p(info$fun_fact)
+            ),
             
+            # ADVANTAGES
+            div(
+              class = "flower-detail-card",
+              h4("✅ Advantages"),
+              tags$ul(
+                lapply(info$advantages, function(item) tags$li(item))
+              )
+            ),
+            
+            # DISADVANTAGES
+            div(
+              class = "flower-detail-card",
+              h4("⚠️ Disadvantages and Growing Considerations"),
+              tags$ul(
+                lapply(info$disadvantages, function(item) tags$li(item))
+              )
+            )
           )
-          
         )
-        
       })
-
+      
       # DISPLAY SETTINGS USED FOR PREDICTION
       
       distance_name <- ifelse(
@@ -587,7 +716,7 @@ server <- function(input, output) {
         )
         
       })
-
+      
       # GET NEAREST NEIGHBOURS
       
       neighbor_indices <- as.vector(
@@ -605,7 +734,7 @@ server <- function(input, output) {
       neighbor_weights <- as.vector(
         prediction_model$W
       )
-
+      
       # GET ACTUAL NEIGHBOUR ROWS
       
       neighbor_points <- train_data[
@@ -624,7 +753,7 @@ server <- function(input, output) {
       neighbor_points$Distance <- neighbor_distance
       
       neighbor_points$Weight <- neighbor_weights
-
+      
       # CREATE NEIGHBOUR TABLE
       
       neighbor_data <- data.frame(
@@ -649,7 +778,7 @@ server <- function(input, output) {
         )
         
       )
-
+      
       # DISPLAY NEIGHBOUR TABLE
       
       output$nearest_neighbors <- renderTable({
@@ -657,94 +786,94 @@ server <- function(input, output) {
         neighbor_data
         
       })
-
+      
       # CREATE VISUALIZATION
       
       output$neighbor_plot <- renderPlot({
         
         ggplot() +
-
-        # ALL TRAINING FLOWERS
-        
-        geom_point(
           
-          data = train_data,
+          # ALL TRAINING FLOWERS
           
-          aes(
-            x = Petal.Length,
-            y = Petal.Width,
-            color = Species
-          ),
+          geom_point(
+            
+            data = train_data,
+            
+            aes(
+              x = Petal.Length,
+              y = Petal.Width,
+              color = Species
+            ),
+            
+            alpha = 0.45,
+            size = 2
+            
+          ) +
           
-          alpha = 0.45,
-          size = 2
+          # NEAREST NEIGHBOURS
           
-        ) +
-
-        # NEAREST NEIGHBOURS
-        
-        geom_point(
+          geom_point(
+            
+            data = neighbor_points,
+            
+            aes(
+              x = Petal.Length,
+              y = Petal.Width,
+              color = Species
+            ),
+            
+            size = 5
+            
+          ) +
           
-          data = neighbor_points,
+          # NEIGHBOUR NUMBERS
           
-          aes(
-            x = Petal.Length,
-            y = Petal.Width,
-            color = Species
-          ),
+          geom_text(
+            
+            data = neighbor_points,
+            
+            aes(
+              x = Petal.Length,
+              y = Petal.Width,
+              label = Neighbour
+            ),
+            
+            nudge_y = 0.05,
+            size = 4
+            
+          ) +
           
-          size = 5
           
-        ) +
-
-        # NEIGHBOUR NUMBERS
+          # USER'S FLOWER
           
-        geom_text(
+          geom_point(
+            
+            data = new_flower,
+            
+            aes(
+              x = Petal.Length,
+              y = Petal.Width
+            ),
+            
+            shape = 8,
+            size = 6,
+            color = "black"
+            
+          ) +
           
-          data = neighbor_points,
+          # GRAPH LABELS
           
-          aes(
-            x = Petal.Length,
-            y = Petal.Width,
-            label = Neighbour
-          ),
-          
-          nudge_y = 0.05,
-          size = 4
-          
-        ) +
-          
-
-        # USER'S FLOWER
-
-        geom_point(
-          
-          data = new_flower,
-          
-          aes(
-            x = Petal.Length,
-            y = Petal.Width
-          ),
-          
-          shape = 8,
-          size = 6,
-          color = "black"
-          
-        ) +
-
-        # GRAPH LABELS
-        
-        labs(
-          
-          title = "Your Flower and Its Nearest Neighbours",
-          
-          x = "Petal Length",
-          
-          y = "Petal Width",
-          
-          color = "Species"
-          
-        ) +
+          labs(
+            
+            title = "Your Flower and Its Nearest Neighbours",
+            
+            x = "Petal Length",
+            
+            y = "Petal Width",
+            
+            color = "Species"
+            
+          ) +
           
           
           theme_minimal()
