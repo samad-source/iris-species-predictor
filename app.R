@@ -222,7 +222,7 @@ ui <- fluidPage(
       .flower-detail-card h4 {
         margin-top: 0;
         margin-bottom: 12px;
-        color: #234e52;
+        color:  #234e52;
         font-weight: bold;
       }
 
