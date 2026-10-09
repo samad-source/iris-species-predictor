@@ -147,7 +147,7 @@ Open the project in **RStudio**.
 ### 3. Install the required packages
 
 ``` r
-install.packages(c("shiny", "kknn", "ggplot2"))
+install.packages(c("shiny", "kknn", "ggplot2","fontawesome"))
 ```
 
 ### 4. Run the application
@@ -167,6 +167,8 @@ shiny::runApp()
 ![screenshot_2](www/iris-predictor-screenshoot2.png)
 
 ![screenshot_3](www/iris-predictor-screenshot3.png)
+
+/![screenshot4](www/iris-predictor-screenshoot4.png)
 
 ## Project Background
 
