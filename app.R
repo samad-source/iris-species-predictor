@@ -2,6 +2,7 @@
 library(shiny)
 library(kknn)
 library(ggplot2)
+library(fontawesome)
 
 # SPECIES INFORMATION
 
@@ -645,7 +646,10 @@ server <- function(input, output) {
             # DESCRIPTION
             div(
               class = "flower-detail-card",
-              h4("About This Flower"),
+              h4(
+                fontawesome::fa("leaf"),
+                "About This Flower"
+                ),
               p(
                 info$description,
                 class = "description"
@@ -655,14 +659,20 @@ server <- function(input, output) {
             # FUN FACT
             div(
               class = "flower-detail-card",
-              h4("✨ Fun Fact"),
+              h4(
+                fontawesome::fa("lightbulb"),
+                "Fun Fact"
+                ),
               p(info$fun_fact)
             ),
             
             # ADVANTAGES
             div(
               class = "flower-detail-card",
-              h4("✅ Advantages"),
+              h4(
+                fontawesome::fa("circle-check"),
+                "Advantages"
+                ),
               tags$ul(
                 lapply(info$advantages, function(item) tags$li(item))
               )
@@ -671,7 +681,10 @@ server <- function(input, output) {
             # DISADVANTAGES
             div(
               class = "flower-detail-card",
-              h4("⚠️ Disadvantages and Growing Considerations"),
+              h4(
+                fontawesome::fa("triangle-exclamation"),
+                "Disadvantages and Growing Considerations"
+                ),
               tags$ul(
                 lapply(info$disadvantages, function(item) tags$li(item))
               )
